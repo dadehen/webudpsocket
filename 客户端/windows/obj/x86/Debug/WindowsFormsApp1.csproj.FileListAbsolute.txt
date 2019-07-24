@@ -1,0 +1,2 @@
+C:\Users\smile\Source\Repos\webudpsocket\客户端\windows\obj\x86\Debug\WindowsFormsApp1.csprojAssemblyReference.cache
+C:\Users\smile\Source\Repos\webudpsocket\客户端\windows\obj\x86\Debug\WindowsFormsApp1.csproj.CoreCompileInputs.cache
