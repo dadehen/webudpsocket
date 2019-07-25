@@ -57,12 +57,14 @@ namespace SocketUPTServer
        
         private void Form1_Load(object sender, EventArgs e)
         {
+            System.Timers.Timer timer1 = new System.Timers.Timer();
             timer1.Interval = 100;
-            timer1.Tick += Timer1_Tick;
+            timer1.Elapsed += Timer1_Tick;
             timer1.Start();
 
+            System.Timers.Timer timer2 = new System.Timers.Timer();
             timer2.Interval = 5000;
-            timer2.Tick += Timer2_Tick;
+            timer2.Elapsed += Timer2_Tick;
             timer2.Start();
 
             IPEndPoint loaclEndPoint = new IPEndPoint(IPAddress.Any, 8001);
@@ -75,6 +77,9 @@ namespace SocketUPTServer
                 {
                     try
                     {
+
+                        UdpSocket.Receive(server);
+
                         byte[] receiveData = new byte[1024];
 
                         EndPoint Remote = loaclEndPoint;
