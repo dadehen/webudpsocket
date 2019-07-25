@@ -3,7 +3,9 @@
     "",
     "\\UDP服务端",
     "\\客户端",
-    "\\客户端\\windows"
+    "\\客户端\\windows",
+    "\\服务端"
   ],
+  "SelectedNode": "\\服务端",
   "PreviewInSolutionExplorer": false
 }
