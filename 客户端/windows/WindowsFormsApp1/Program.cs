@@ -1,12 +1,18 @@
-﻿namespace WindowsFormsApp1
-{
-    using System;
-    using System.Windows.Forms;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using System.Windows.Forms;
 
-    internal static class Program
+namespace WindowsFormsApp1
+{
+    static class Program
     {
+        /// <summary>
+        /// 应用程序的主入口点。
+        /// </summary>
         [STAThread]
-        private static void Main()
+        static void Main()
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
@@ -14,4 +20,3 @@
         }
     }
 }
-

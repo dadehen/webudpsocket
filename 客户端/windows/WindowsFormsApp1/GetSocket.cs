@@ -1,16 +1,21 @@
-﻿namespace WindowsFormsApp1
-{
-    using System;
-    using System.Net.Sockets;
-    using System.Text;
-    using System.Threading;
+﻿using RestSharp;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Net.Sockets;
+using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
 
-    internal class GetSocket
+namespace WindowsFormsApp1
+{ 
+    class GetSocket
     {
         public Socket socket;
-        public byte[] data = new byte[0];
+        public byte[] data = new byte[] { };
         public string user;
         public int id;
+
         public bool created = false;
 
         public GetSocket(Socket socket, string user, int id)
@@ -18,69 +23,8 @@
             this.socket = socket;
             this.user = user;
             this.id = id;
-            socket.ReceiveBufferSize = 0x100000;
-            socket.SendBufferSize = 0x100000;
-        }
-
-        internal void AcceptContent()
-        {
-            while (!this.ContentOver())
-            {
-                this.GetSocketData();
-            }
-        }
-
-        private bool ContentOver()
-        {
-            int contentLength = this.ContentLength;
-            int heardLength = this.HeardLength;
-            return (this.data.Length == (contentLength + heardLength));
-        }
-
-        internal void GetHeard()
-        {
-            while (!this.HeardOver())
-            {
-                this.GetSocketData();
-            }
-        }
-
-        private void GetSocketData()
-        {
-            int available = this.socket.Available;
-            if (available > 0)
-            {
-                byte[] array = new byte[available + this.data.Length];
-                this.data.CopyTo(array, 0);
-                this.socket.Receive(array, this.data.Length, available, SocketFlags.None);
-                this.data = new byte[array.Length];
-                array.CopyTo(this.data, 0);
-            }
-            else
-            {
-                Thread.Sleep(100);
-            }
-        }
-
-        private bool HeardOver()
-        {
-            int num = 0;
-            for (int i = 0; i < this.data.Length; i++)
-            {
-                if ((((num % 2) == 0) && (this.data[i] == 13)) || (((num % 2) == 1) && (this.data[i] == 10)))
-                {
-                    num++;
-                }
-                else
-                {
-                    num = 0;
-                }
-                if (num == 4)
-                {
-                    return true;
-                }
-            }
-            return false;
+            socket.ReceiveBufferSize = 1024 * 1024;
+            socket.SendBufferSize = 1024 * 1024;
         }
 
         public int HeardLength
@@ -88,9 +32,9 @@
             get
             {
                 int num = 0;
-                for (int i = 0; i < this.data.Length; i++)
+                for (int i = 0; i < data.Length; i++)
                 {
-                    if ((((num % 2) == 0) && (this.data[i] == 13)) || (((num % 2) == 1) && (this.data[i] == 10)))
+                    if ((num % 2 == 0 && data[i] == '\r') || (num % 2 == 1 && data[i] == '\n'))
                     {
                         num++;
                     }
@@ -98,33 +42,32 @@
                     {
                         num = 0;
                     }
+
                     if (num == 4)
                     {
-                        return (i + 1);
+                        return i+1;
                     }
                 }
                 return 0;
             }
         }
-
-        public byte[] HeardData
-        {
+        public byte[] HeardData {
             get
             {
-                int heardLength = this.HeardLength;
-                byte[] destinationArray = new byte[heardLength];
-                Array.Copy(this.data, destinationArray, heardLength);
-                return destinationArray;
+                int length = HeardLength;
+                byte[] hearddata = new byte[length];
+                Array.Copy(data, hearddata, length);
+                return hearddata;
             }
         }
-
-        public string Method
-        {
+         
+        public string Method {
             get
             {
-                string str = Encoding.UTF8.GetString(this.data).Split("\r\n".ToCharArray())[0];
-                char[] separator = new char[] { ' ' };
-                return str.Split(separator)[0].ToUpper();
+                string str = Encoding.UTF8.GetString(data);
+                str = str.Split("\r\n".ToCharArray())[0];
+                str = str.Split(' ')[0].ToUpper();
+                return str;
             }
         }
 
@@ -132,81 +75,147 @@
         {
             get
             {
-                string str = Encoding.UTF8.GetString(this.data).Split("\r\n".ToCharArray())[0];
-                char[] separator = new char[] { ' ' };
-                return str.Split(separator)[1];
+                string str = Encoding.UTF8.GetString(data);
+                str = str.Split("\r\n".ToCharArray())[0];
+                str = str.Split(' ')[1];
+                return str;
             }
         }
 
-        public string Url
-        {
+        public string Url {
             get
             {
-                string host = this.Host;
+                //string host = Host.TrimStart("https://".ToCharArray()).TrimStart("http://".ToCharArray());
+                string host = Host;
                 if (host.Contains("http://") || host.Contains("https://"))
                 {
                     host = host.TrimStart("https://".ToCharArray()).TrimStart("http://".ToCharArray());
                 }
-                char[] separator = new char[] { ':' };
-                if (host.Split(separator).Length > 1)
+                if (host.Split(':').Length > 1)
                 {
-                    char[] chArray2 = new char[] { ':' };
-                    char[] chArray3 = new char[] { '/' };
-                    return host.Split(chArray2)[0].Split(chArray3)[0];
+                    return host.Split(':')[0].Split('/')[0];
                 }
-                char[] chArray4 = new char[] { '/' };
-                return host.Split(chArray4)[0];
+                return host.Split('/')[0];
             }
         }
-
-        public int Port
-        {
+        public int Port {
             get
             {
-                string host = this.Host;
-                bool flag = false;
-                bool flag2 = false;
+                string host = Host;
+                bool ishttp = false;
+                bool ishttps = false;
                 if (host.Contains("http://"))
                 {
-                    flag = true;
+                    ishttp = true;
                     host = host.TrimStart("http://".ToCharArray());
                 }
                 else if (host.Contains("https://"))
                 {
-                    flag2 = true;
+                    ishttps = true;
                     host = host.TrimStart("https://".ToCharArray());
                 }
-                char[] separator = new char[] { ':' };
-                if (host.Split(separator).Length > 1)
+
+                if (host.Split(':').Length > 1)
                 {
-                    char[] chArray2 = new char[] { ':' };
-                    return int.Parse(host.Split(chArray2)[1]);
+                    return int.Parse(host.Split(':')[1]);
                 }
-                if (!flag && flag2)
+                else
                 {
-                    return 0x1bb;
+                    if (ishttp)
+                    {
+                        return 80;
+                    }
+                    else if (ishttps)
+                    {
+                        return 443;
+                    }
                 }
                 return 80;
             }
         }
-
-        public int ContentLength
-        {
+        public int ContentLength {
             get
             {
-                string[] strArray = Encoding.UTF8.GetString(this.HeardData).Split("\r\n".ToCharArray());
-                for (int i = 1; i < strArray.Length; i++)
+                string strHeard = Encoding.UTF8.GetString(HeardData);
+                string[] arrHeard = strHeard.Split("\r\n".ToCharArray());
+
+                for (int i = 1; i < arrHeard.Length; i++)
                 {
-                    char[] separator = new char[] { ':' };
-                    if (strArray[i].Split(separator)[0] == "Content-Length")
+                    if (arrHeard[i].Split(':')[0] == "Content-Length")
                     {
-                        char[] chArray2 = new char[] { ':' };
-                        return int.Parse(strArray[i].Split(chArray2)[1]);
+                        return int.Parse(arrHeard[i].Split(':')[1]);
                     }
                 }
+
                 return 0;
             }
         }
+        internal void GetHeard()
+        {
+            while (!HeardOver())
+            {
+                GetSocketData();
+            }
+        }
+
+        private void GetSocketData()
+        {
+            int length = socket.Available;
+            if (length > 0)
+            {
+                byte[] acceptdata = new byte[length + data.Length];
+                data.CopyTo(acceptdata, 0);
+                socket.Receive(acceptdata, data.Length, length, SocketFlags.None);
+                data = new byte[acceptdata.Length];
+                acceptdata.CopyTo(data, 0);
+            }
+            else
+            {
+                Thread.Sleep(100);
+            }
+        }
+         
+        private bool HeardOver()
+        {
+            int num = 0;
+            for (int i = 0; i < data.Length; i++)
+            {
+                if((num%2==0&&data[i]=='\r')|| (num % 2 == 1 && data[i] == '\n'))
+                {
+                    num++;
+                }
+                else
+                {
+                    num = 0;
+                }
+
+                if(num==4)
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        internal void AcceptContent()
+        {
+            while (!ContentOver())
+            {
+                GetSocketData();
+            }
+        }
+
+        private bool ContentOver()
+        {
+            int contetnt = ContentLength;
+            int heard = HeardLength; 
+
+            if(data.Length==contetnt+heard)
+            {
+                return true;
+            }
+            return false;
+        }
+         
     }
 }
-
