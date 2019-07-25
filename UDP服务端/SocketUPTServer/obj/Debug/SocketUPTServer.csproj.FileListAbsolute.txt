@@ -1,0 +1,15 @@
+C:\Users\tester101\source\repos\SocketUPTServer\SocketUPTServer\bin\Debug\SocketUPTServer.exe.config
+C:\Users\tester101\source\repos\SocketUPTServer\SocketUPTServer\bin\Debug\SocketUPTServer.exe
+C:\Users\tester101\source\repos\SocketUPTServer\SocketUPTServer\bin\Debug\SocketUPTServer.pdb
+C:\Users\tester101\source\repos\SocketUPTServer\SocketUPTServer\obj\Debug\SocketUPTServer.csprojAssemblyReference.cache
+C:\Users\tester101\source\repos\SocketUPTServer\SocketUPTServer\obj\Debug\SocketUPTServer.Form1.resources
+C:\Users\tester101\source\repos\SocketUPTServer\SocketUPTServer\obj\Debug\SocketUPTServer.Properties.Resources.resources
+C:\Users\tester101\source\repos\SocketUPTServer\SocketUPTServer\obj\Debug\SocketUPTServer.csproj.GenerateResource.cache
+C:\Users\tester101\source\repos\SocketUPTServer\SocketUPTServer\obj\Debug\SocketUPTServer.csproj.CoreCompileInputs.cache
+C:\Users\tester101\source\repos\SocketUPTServer\SocketUPTServer\obj\Debug\SocketUPTServer.exe
+C:\Users\tester101\source\repos\SocketUPTServer\SocketUPTServer\obj\Debug\SocketUPTServer.pdb
+C:\Users\tester101\source\repos\SocketUPTServer\SocketUPTServer\bin\Debug\Newtonsoft.Json.dll
+C:\Users\tester101\source\repos\SocketUPTServer\SocketUPTServer\bin\Debug\Newtonsoft.Json.xml
+C:\Users\tester101\source\repos\SocketUPTServer\SocketUPTServer\obj\Debug\SocketUPTServer.csproj.CopyComplete
+C:\Users\tester101\source\repos\SocketUPTServer\SocketUPTServer\bin\Debug\RestSharp.dll
+C:\Users\tester101\source\repos\SocketUPTServer\SocketUPTServer\bin\Debug\RestSharp.xml
